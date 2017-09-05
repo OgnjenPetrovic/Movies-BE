@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Movie;
 class MoviesController extends Controller
 {
+    const defaultGet = 10;
     /**
      * Display a listing of the resource.
      *
@@ -11,12 +12,13 @@ class MoviesController extends Controller
      */
     public function index(Request $request)
     {       
+        $take = request()->has('take') ? request('take') : self::defaultGet;
+        $skip = request('skip');
         $name = $request->get('name');
-        
         if($name){
-            return $this->findMovies($name);
+            return $this->search($name);
         }
-        return Movie::all();
+        return Movie::skip($skip)->take($take)->get();
     }
     /**
      * Show the form for creating a new resource.
@@ -99,6 +101,11 @@ class MoviesController extends Controller
         return $movie;
     }
     public function findMovies($name){
-        return Movie::where('name', 'like','%'. $name .'%')->get();
+        return Movie::where('name', 'like','%'. $name .'%')
+        ->get();
+    }   
+    public function search($name){
+        return Movie::where('name', 'like','%'. $name .'%')
+        ->paginate(5);
     }   
 }

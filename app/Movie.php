@@ -1,12 +1,8 @@
 <?php
-
 namespace App;
-
 use Illuminate\Database\Eloquent\Model;
-
 class Movie extends Model
 {
-    
 	protected $fillable = [
         'name',
         'director',
@@ -15,10 +11,10 @@ class Movie extends Model
         'releaseDate',
         'genres'
     ];
-
+    
     public function getGenresAttribute($value)
     {
-        return json_decode($value);
+        return json_decode($value, true);
     }
     public function setGenresAttribute($value)
     {
