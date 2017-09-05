@@ -30,7 +30,16 @@ class MoviesController extends Controller
      */
     public function store(Request $request)
     {
-        return Movie::create($request->all());
+         $this->validate(request(),[
+                'name' => 'required|unique:movies',
+                'director' => 'required',
+                'duration' => 'required|min:1|max:500',
+                'releaseDate' => 'required|unique:movies',
+                'imageUrl' => 'required|url',
+                'genres' => 'required'
+            ]);
+
+         return Movie::create($request->all());
     }
     /**
      * Display the specified resource.
@@ -61,6 +70,15 @@ class MoviesController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $this->validate(request(),[
+                'name' => 'required|unique:name',
+                'director' => 'required',
+                'duration' => 'required|min:1|max:500',
+                'releaseDate' => 'required|unique:releaseDate',
+                'imageUrl' => 'required|url',
+                'genres' => 'required'
+            ]);
         
         $movie = Movie::findOrFail($id);
         $movie->update($request->all());
