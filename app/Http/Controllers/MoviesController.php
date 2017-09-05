@@ -9,8 +9,13 @@ class MoviesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(Request $request)
+    {       
+        $name = $request->get('name');
+        
+        if($name){
+            return $this->findMovies($name);
+        }
         return Movie::all();
     }
     /**
@@ -30,16 +35,15 @@ class MoviesController extends Controller
      */
     public function store(Request $request)
     {
-         $this->validate(request(),[
+        $this->validate(request(),[
                 'name' => 'required|unique:movies',
                 'director' => 'required',
                 'duration' => 'required|min:1|max:500',
                 'releaseDate' => 'required|unique:movies',
                 'imageUrl' => 'required|url',
-                'genres' => 'required'
+                'genres' => 'required',
             ]);
-
-         return Movie::create($request->all());
+        return Movie::create($request->all());
     }
     /**
      * Display the specified resource.
@@ -70,16 +74,14 @@ class MoviesController extends Controller
      */
     public function update(Request $request, $id)
     {
-
-        $this->validate(request(),[
+       $this->validate(request(),[
                 'name' => 'required|unique:name',
                 'director' => 'required',
                 'duration' => 'required|min:1|max:500',
                 'releaseDate' => 'required|unique:releaseDate',
                 'imageUrl' => 'required|url',
-                'genres' => 'required'
+                'genres' => 'required',
             ]);
-        
         $movie = Movie::findOrFail($id);
         $movie->update($request->all());
         return $movie;
@@ -96,4 +98,7 @@ class MoviesController extends Controller
         $movie->delete();
         return $movie;
     }
+    public function findMovies($name){
+        return Movie::where('name', 'like','%'. $name .'%')->get();
+    }   
 }
